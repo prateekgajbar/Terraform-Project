@@ -1,7 +1,13 @@
+# ---------------------------
+# AWS Region
+# ---------------------------
 variable "region" {
   default = "ap-south-1"
 }
 
+# ---------------------------
+# VPC
+# ---------------------------
 variable "mumbai_vpc_cidr" {
   description = "CIDR of VPC"
   type        = string
@@ -9,77 +15,98 @@ variable "mumbai_vpc_cidr" {
 }
 
 variable "vpc_name" {
-  description = "VPC Name"
+  description = "Name of VPC"
   type        = string
-  default     = "My_VPC"
+  default     = "My-vpc"
 }
 
+# ---------------------------
+# Public Subnet
+# ---------------------------
 variable "public_cidr_block" {
   description = "Public Subnet CIDR block"
   type        = string
-  default     = "10.0.1.0/24"
+  default     = "10.0.0.0/20"
 }
 
 variable "public_available_zone" {
-  description = "Public subnet availability zone"
+  description = "Availability zone for public subnet"
   type        = string
   default     = "ap-south-1a"
 }
 
 variable "public_subnet_name" {
-  description = "Public subnet name"
+  description = "Name of public subnet"
   type        = string
-  default     = "public_subnet"
+  default     = "public-subnet"
 }
 
+# ---------------------------
+# Private Subnet
+# ---------------------------
 variable "private_cidr_block" {
-  description = "Private Subnet CIDR Block"
+  description = "Private Subnet CIDR block"
   type        = string
-  default     = "10.0.2.0/24"
+  default     = "10.0.16.0/20"
 }
 
 variable "private_available_zone" {
-  description = "Private subnet availability zone"
+  description = "Availability zone for private subnet"
   type        = string
   default     = "ap-south-1b"
 }
 
 variable "private_subnet_name" {
-  description = "Private subnet name"
+  description = "Name of private subnet"
   type        = string
-  default     = "private_subnet"
+  default     = "private-subnet"
 }
 
+# ---------------------------
+# Internet Gateway & NAT
+# ---------------------------
 variable "igw_name" {
   description = "Internet Gateway Name"
   type        = string
-  default     = "my_igw"
+  default     = "my-igw"
 }
 
 variable "nat_name" {
-  description = "NAT Gateway name"
+  description = "NAT Gateway Name"
   type        = string
-  default     = "my_nat"
+  default     = "my-ngw"
 }
 
 variable "nat_route_table_name" {
   description = "NAT Gateway route table name"
   type        = string
-  default     = "NAT_TB"
+  default     = "NAT-tb"
 }
 
+# ---------------------------
+# Security Group
+# ---------------------------
 variable "security_group_name" {
   description = "Name of Security Group"
   type        = string
-  default     = "My_SG"
+  default     = "My-sg-1"
 }
 
 variable "description_sg" {
   description = "Description of Security Group"
   type        = string
-  default     = "Allow SSH, HTTP, and MySQL traffic"
+  default     = "Allow SSH, HTTP, 8080 and MySQL traffic"
 }
 
+# variable "my_ip" {
+#   description = "Your public IP for SSH access"
+#   type        = string
+#   default     = "YOUR_PUBLIC_IP/32"  # Replace with your real public IP
+# }
+
+# ---------------------------
+# EC2 Instance
+# ---------------------------
 variable "image_instance" {
   description = "AMI of EC2 instance"
   type        = string
@@ -87,26 +114,25 @@ variable "image_instance" {
 }
 
 variable "instance_type" {
-  description = "EC2 Instance Type"
+  description = "EC2 instance type"
   type        = string
   default     = "t3.micro"
 }
 
 variable "instance_key" {
-  description = "Key pair name for EC2 instance"
+  description = "Key pair name for EC2"
   type        = string
-  default     = "Ryzen"
+  default     = "Ryzen"  # Key name in AWS (without .pem)
 }
 
 variable "public_instance_name" {
-  description = "Public EC2 Instance name"
+  description = "Public EC2 instance name"
   type        = string
-  default     = "Proxy_Server"
+  default     = "jump-server"
 }
 
 variable "private_instance_name" {
-  description = "Private EC2 instance name (optional)"
+  description = "Private EC2 instance name"
   type        = string
-  default     = "Application_Server"
+  default     = "application-server"
 }
-
