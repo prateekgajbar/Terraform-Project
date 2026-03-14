@@ -10,7 +10,9 @@ resource "aws_vpc" "my-vpc" {
   enable_dns_support   = true
   enable_dns_hostnames = true
 
-  tags = { Name = var.vpc_name }
+  tags = {
+    Name = var.vpc_name
+  }
 }
 
 # ----------------
@@ -21,15 +23,20 @@ resource "aws_subnet" "public_subnet" {
   cidr_block              = var.public_cidr_block
   map_public_ip_on_launch = true
   availability_zone       = var.public_available_zone
-  tags = { Name = var.public_subnet_name }
+
+  tags = {
+    Name = var.public_subnet_name
+  }
 }
 
 resource "aws_subnet" "private_subnet" {
   vpc_id                  = aws_vpc.my-vpc.id
   cidr_block              = var.private_cidr_block
-  map_public_ip_on_launch = true
   availability_zone       = var.private_available_zone
-  tags = { Name = var.private_subnet_name }
+
+  tags = {
+    Name = var.private_subnet_name
+  }
 }
 
 # ----------------
@@ -37,7 +44,10 @@ resource "aws_subnet" "private_subnet" {
 # ----------------
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.my-vpc.id
-  tags   = { Name = var.igw_name }
+
+  tags = {
+    Name = var.igw_name
+  }
 }
 
 # ----------------
@@ -45,6 +55,7 @@ resource "aws_internet_gateway" "igw" {
 # ----------------
 resource "aws_default_route_table" "default" {
   default_route_table_id = aws_vpc.my-vpc.default_route_table_id
+
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.igw.id
@@ -75,18 +86,21 @@ resource "aws_security_group" "sg" {
     protocol    = "tcp"
     cidr_blocks = [var.my_ip]
   }
+
   ingress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
   ingress {
     from_port   = 8080
     to_port     = 8080
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
   ingress {
     from_port   = 3306
     to_port     = 3306
@@ -107,8 +121,14 @@ resource "aws_security_group" "sg" {
 # ----------------
 resource "aws_db_subnet_group" "db_subnet" {
   name       = "my-db-subnet-group"
-  subnet_ids = [aws_subnet.public_subnet.id, aws_subnet.private_subnet.id]
-  tags       = { Name = "db-subnet-group" }
+  subnet_ids = [
+    aws_subnet.public_subnet.id,
+    aws_subnet.private_subnet.id
+  ]
+
+  tags = {
+    Name = "db-subnet-group"
+  }
 }
 
 # ----------------
@@ -131,9 +151,10 @@ resource "aws_db_instance" "rds" {
 }
 
 # ----------------
-# EC2 Instance with Python + Tomcat + WAR
+# EC2 Instance
 # ----------------
 resource "aws_instance" "app_server" {
+
   ami                    = var.image_instance
   instance_type          = var.instance_type
   key_name               = var.instance_key
@@ -142,6 +163,7 @@ resource "aws_instance" "app_server" {
 
   user_data = <<-EOF
 #!/bin/bash
+
 yum update -y
 yum install java -y
 yum install python3 -y
@@ -161,8 +183,11 @@ python3 - <<PY
 f = open('/opt/apache-tomcat-9.0.115/conf/context.xml', 'r')
 lines = f.readlines()
 f.close()
+
 resource = '    <Resource name="jdbc/TestDB" auth="Container" type="javax.sql.DataSource" maxTotal="500" maxIdle="30" maxWaitMillis="1000" username="admin" password="prateek123" driverClassName="com.mysql.jdbc.Driver" url="jdbc:mysql://${aws_db_instance.rds.address}:3306/studentapp?useUnicode=yes&amp;characterEncoding=utf8"/>\n'
+
 lines.insert(-1, resource)
+
 f = open('/opt/apache-tomcat-9.0.115/conf/context.xml', 'w')
 f.writelines(lines)
 f.close()
@@ -170,7 +195,10 @@ PY
 
 /opt/apache-tomcat-9.0.115/bin/catalina.sh stop
 /opt/apache-tomcat-9.0.115/bin/catalina.sh start
+
 EOF
 
-  tags = { Name = var.private_instance_name }
+  tags = {
+    Name = var.private_instance_name
+  }
 }
